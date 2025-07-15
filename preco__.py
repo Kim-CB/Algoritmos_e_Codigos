@@ -130,7 +130,7 @@ def menu():
                         calcular_total()
                     elif continuar == 'n':
                         print("Tchau!")
-                        menu()
+                        break
                     else:
                         print("Digite apenas 's' para sim ou 'n' para não.")
             elif opcao == 2:
