@@ -102,3 +102,50 @@ def multiplas_compras():
     
     if compras:
         print(f"--- RESUMO FINAL ---")
+
+        for compra in compras:
+            print(f"| {compra['codigo']:<7} | {compra['quantidade']:<10} | R$ {compra['preco_unitario']:<12.2f} | R$ {compra['preco_total']:<12.2f} |")
+            print()
+            print(f"| TOTAL GERAL                      | R$ {total_geral:<12.2f} |")
+    else:
+        print("Nenhuma compra realizada.")
+
+def menu():
+    while True:
+        print("Escolha uma opção:")
+        print("1 - Calcular preço de um produto")
+        print("2 - Processar múltiplas compras")
+        print("3 - Sair")
+
+        try:
+            opcao = int(input("Digite sua opção (1 ou 2 ou 3): "))
+
+            if opcao == 1:
+                calcular_total()
+
+                while True:
+                    continuar = input("\nDeseja calcular outro produto? (s/n): ").lower().strip()
+                    if continuar == 's':
+                        print()
+                        calcular_total()
+                    elif continuar == 'n':
+                        print("Tchau!")
+                        menu()
+                    else:
+                        print("Digite apenas 's' para sim ou 'n' para não.")
+            elif opcao == 2:
+                multiplas_compras()
+            elif opcao == 3:
+                print("Obrigado por testar o programa.")
+                break
+            else:
+                print("Opção inválida! Digite 1 ou 2 ou 3.")
+            
+        except ValueError:
+            print("Erro: Digite apenas números válidos.")
+
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
+
+if __name__ == "__main__":
+    menu()
