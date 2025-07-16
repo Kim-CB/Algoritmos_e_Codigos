@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Expressão</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Calculadora de Expressão</h1>
+    <p>Abra o console do navegador (F12) para ver os resultados detalhados</p>
+  </body>
+  <script>
+    function expressao(a, b, c) {
+      if (a <= 0 || b <= 0 || c <= 0) {
+        // throw : laça uma exceção, interrompendo o fluxo
+        // new : cria uma instância para uma função ou classe
+        throw new Error(
+          "Todos os valores devem ser números inteiros positivos."
+        );
+      }
+
+      const r = Math.pow(a + b, 2);
+      const s = Math.pow(b + c, 2);
+      const d = (r + s) / 2;
+
+      return { r, s, d };
+    }
+
+    // função para facilitar alguns prints
+    function mostrarResultado(mensagem) {
+      alert(mensagem);
+      // console.log , print() no console
+      console.log(mensagem);
+    }
+
+    function main() {
+      console.log("-- Calculadora de Expressão --");
+      console.log("Fórmula: D = (R + S) / 2");
+      console.log("onde R = (A + B)² e S = (B + C)²");
+
+      try {
+        const a = parseInt(prompt("Digite o valor de A:"));
+        const b = parseInt(prompt("Digite o valor de B:"));
+        const c = parseInt(prompt("Digite o valor de C:"));
+
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+          throw new Error("Por favor, digite apenas números!");
+        }
+        // chamando a função de cálculo
+        const { r, s, d } = expressao(a, b, c);
+
+        let resultado = `-- Resultados --\n`;
+        resultado += `Valores de Entrada:\n`;
+        resultado += `A = ${a}\n`;
+        resultado += `B = ${b}\n`;
+        resultado += `C = ${c}\n\n`;
+        resultado += `Resultado Final: \n`;
+        resultado += `D = (${r} + ${s}) / 2 = ${d}\n\n`;
+        resultado += `Informações Extras:\n`;
+        resultado += `D como número inteiro: ${Math.floor(d)}\n`;
+        resultado += `D arredondado: ${d.toFixed(2)}\n`;
+        resultado += `Raiz quadrada de D: ${Math.sqrt(d).toFixed(2)}\n`;
+
+        mostrarResultado(resultado);
+      } catch (e) {
+        mostrarResultado(`Erro: ${e.message}`);
+      }
+    }
+    /*
+    Versão detalhada do cálculo, passo a passo 
+    */
+    function passoAPasso(a, b, c) {
+      let detalhes = "Calculo passo a passo:\n\n";
+      detalhes += `Dados de entrada: A = ${a}, B = ${b}, C = ${c}\n`;
+
+      // Passo 1 : Calcular A + B
+      const somaAB = a + b;
+      detalhes += `\nPasso 1: A + B = ${a} + ${b} = ${somaAB}\n`;
+
+      // Passo 2 : Calcular R = (A + B)²
+      const r = Math.pow(somaAB, 2);
+      detalhes += `\nPasso 2: R = (${somaAB})² = ${r}\n`;
+
+      // Passo 3 : Calcular B + C
+      const somaBC = b + c;
+      detalhes += `\nPasso 3: B + C = ${b} + ${c} = ${somaBC}\n`;
+
+      // Passo 4 : Calcular S = (B+C)²
+      const s = Math.pow(somaBC, 2);
+      detalhes += `\nPasso 3: S = (${somaBC})² = ${s}\n`;
+
+      // Passo 5 : Calcular R + S
+      const somaRS = r + s;
+      detalhes += `\nPasso 5: R + S = ${r} + ${s} = ${somaRS}\n`;
+
+      // Passo 6 : Calcular D = (R + S) / 2
+      const d = somaRS / 2;
+      detalhes += `Passo 6: D = ${somaRS} / 2 = ${d}\n\n`;
+      detalhes += `Resultado Final: D = ${d}`;
+
+      mostrarResultado(detalhes);
+      return d;
+    }
+
+    function menu() {
+      while (true) {
+        const opcao = prompt(
+          "Calculadora de Expressão\n\n" +
+            "1. Calcular expressão\n" +
+            "2. Calcular com passo a passo\n" +
+            "3. Sair\n\n" +
+            "Escolha uma opção(1-3): "
+        );
+        if (opcao === null || opcao === "3") {
+          alert("Obrigado por usar a calculadora.");
+          return;
+        }
+
+        switch (opcao) {
+          case "1":
+            main();
+            break;
+          case "2":
+            const a = parseInt(prompt("Digite o valor de A:"));
+            const b = parseInt(prompt("Digite o valor de B:"));
+            const c = parseInt(prompt("Digite o valor de C:"));
+
+            if (
+              !isNaN(a) &&
+              !isNaN(b) &&
+              !isNaN(c) &&
+              a > 0 &&
+              b > 0 &&
+              c > 0
+            ) {
+              passoAPasso(a, b, c);
+            } else {
+              alert("Valores devem ser inteiros positivos.");
+            }
+            break;
+          default:
+            alert("Opção inválida. Escolha entre 1 e 3.");
+        }
+      }
+    }
+
+    menu();
+  </script>
+</html>
