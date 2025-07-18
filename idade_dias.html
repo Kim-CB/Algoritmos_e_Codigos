@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Dias</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Convertendo idade para dias</h1>
+    <p>Abra o console do navegador (F12) para ver os resultados detalhados</p>
+  </body>
+  <script>
+    function eBissexto(ano) {
+      return (ano % 4 == 0 && ano % 100 != 0) || ano % 400 == 0;
+    }
+
+    function diasMes(mes, ano) {
+      if (mes === 2) return eBissexto(ano) ? 29 : 30;
+      if ([4, 6, 9, 11].includes(mes)) return 30;
+      return 31;
+    }
+    function idadeParaDias(anos, meses, dias) {
+      if (anos < 0 || meses < 0 || dias < 0) return 0;
+
+      let totalDias = 0;
+      const anoAtual = 2024;
+
+      for (i = 0; i < anos; i++) {
+        totalDias += eBissexto(anoAtual - i) ? 366 : 365;
+      }
+      for (i = 1; i <= meses; i++) {
+        totalDias += diasMes(i, anoAtual - anos);
+      }
+
+      totalDias += dias;
+      return totalDias;
+    }
+    function mostrarResultado(mensagem) {
+      alert(mensagem);
+      console.log(mensagem);
+    }
+    function main() {
+      console.log("-- Conversor de Idade para Dias --");
+
+      try {
+        const anos = parseInt(prompt("Digite a quantidade de anos: "));
+        const meses = parseInt(prompt("Digite a quantidade de meses: "));
+        const dias = parseInt(prompt("Digite a quantidade de dias: "));
+
+        if (isNaN(anos) || isNaN(meses) || isNaN(dias)) {
+          throw new Error("Por favor, digite apenas");
+        }
+        if (anos < 0 || meses < 0 || dias < 0) {
+          throw new Error("Os valores não podem ser negativos.");
+        }
+
+        const totalDias = idadeParaDias(anos, meses, dias);
+        const semanas = Math.floor(totalDias / 7);
+        const diasRestantes = totalDias % 7;
+
+        let resultado = `\n`;
+        resultado += `Idade inserida:\n`;
+        resultado += `- ${anos} anos\n`;
+        resultado += `- ${meses} meses\n`;
+        resultado += `- ${dias} dias\n`;
+        resultado += `Total de dias: ${totalDias}\n`;
+        resultado += `Equivalente a:\n`;
+        resultado += `- ${semanas} semanas e ${diasRestantes} dias\n`;
+        resultado += `- Aproxidamente ${(totalDias / 365.25).toFixed(
+          2
+        )} anos\n`;
+
+        mostrarResultado(resultado);
+      } catch (e) {
+        mostrarResultado(`Erro: ${e.message}`);
+      }
+    }
+
+    function testar() {
+      const exemplos = [
+        { anos: 1, meses: 0, dias: 0 }, // 1 ano
+        { anos: 2, meses: 0, dias: 0 }, // 2 anos
+        { anos: 0, meses: 6, dias: 15 }, // 6 meses e 15 dias
+        { anos: 25, meses: 4, dias: 10 }, // 25 anos, 4 meses e 10 dias
+        { anos: 0, meses: 0, dias: 100 }, // 100 dias
+      ];
+      let resultado = "-- Testes -- \n\n";
+      for (const exemplo of exemplos) {
+        const totalDias = idadeParaDias(
+          exemplo.anos,
+          exemplo.meses,
+          exemplo.dias
+        );
+        resultado += `${exemplo.anos} anos ${exemplo.meses} meses ${exemplo.dias} dias = ${totalDias} dias\n`;
+      }
+      mostrarResultado(resultado);
+    }
+
+    function menu() {
+      while (true) {
+        const opcao = prompt(
+          "Conversor de Idade para Dias\n\n" +
+            "1. Converter idade\n" +
+            "2. Executar teste automáticos\n" +
+            "3. Sair\n\n" +
+            "Escolha uma opção(1 - 3):"
+        );
+        if (opcao === null || opcao === "3") {
+          alert("Tchau!");
+          return;
+        }
+        switch (opcao) {
+          case "1":
+            main();
+            break;
+          case "2":
+            testar();
+            break;
+          default:
+            alert("Opção inválida! Escolha entre 1 e 3.");
+        }
+      }
+    }
+    menu();
+  </script>
+</html>
