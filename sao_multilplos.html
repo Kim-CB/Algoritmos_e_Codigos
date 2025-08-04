@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Múltiplos</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tentando apresentar se são múltiplos ou não</h1>
+    <p>Abra o console do navegador (F12) para ver os resultados detalhados</p>
+  </body>
+  <script>
+    // Função de verificação principal
+    function verificarMultiplos(a, b) {
+      if (a == 0 || b == 0) {
+        throw new Error("Os valores não podem ser zero!");
+      }
+      // verificar a para b
+      const AmultiploB = a % b === 0;
+      // verificar b para a
+      const BmultiploA = b % a === 0;
+
+      // Determinar relação
+      let relacao, mensagem;
+      if (AmultiploB && BmultiploA) {
+        relacao = "ambos_multiplos";
+        mensagem = "São múltiplos";
+      } else if (AmultiploB && BmultiploA) {
+        relacao = "a_multiplo_b";
+        mensagem = "São múltiplos";
+      } else if (BmultiploA) {
+        relacao = "b_multiplo_a";
+        mensagem = "São múltiplos";
+      } else {
+        relacao = "nao_multiplos";
+        mensagem = "Não são múltiplos";
+      }
+
+      return {
+        mensagem: mensagem,
+        relacao: relacao,
+        AmultiploB: AmultiploB,
+        BmultiploA: BmultiploA,
+        a: a,
+        b: b,
+      };
+    }
+
+    // Função para formatar o resultado
+    function resultadoDetalhado(resultado) {
+      const a = resultado.a;
+      const b = resultado.b;
+      let saida = "";
+
+      saida += "-----------------------------------\n";
+      saida += "----------RESULTADO---------------\n";
+      saida += "----------------------------------\n";
+
+      saida += `Valores analisados: a = ${a}, b = ${b}\n`;
+      saida += `Resultado: ${resultado.mensagem}\n`;
+
+      saida += `---------------------------------\n`;
+      saida += `------- ANÁLISE DETALHADA ----------\n`;
+      saida += `---------------------------------\n`;
+      // se a para b
+      if (resultado.AmultiploB) {
+        saida += `${a} é múltiplo de ${b}\n`;
+        saida += `${a} / ${b} = ${Math.floor(a / b)} (resto = ${a % b})\n`;
+        saida += `${a} = ${b} x ${Math.floor(a / b)}\n`;
+      } else {
+        saida += `${a} não é múltiplo de ${b}\n`;
+        saida += `${a} / ${b} = ${Math.floor(a / b)} (resto = ${a % b})\n`;
+        saida += `${a} = ${b} x ${Math.floor(a / b)} + ${a % b}\n`;
+      }
+      // se b para a
+      if (resultado.BmultiploA) {
+        saida += `${b} é múltiplo de ${a}\n`;
+        saida += `${b} / ${a} = ${Math.floor(b / a)} (resto = ${b % a})\n`;
+        saida += `${b} = ${a} x ${Math.floor(b / a)}\n`;
+      } else {
+        saida += `${b} não é múltiplo de ${a}\n`;
+        saida += `${b} / ${a} = ${Math.floor(b / a)} (resto = ${b % a})\n`;
+        saida += `${b} = ${a} x ${Math.floor(b / a)} + ${b % a}\n`;
+      }
+
+      return saida;
+    }
+
+    // Função para encontrar múltiplos
+    function encontraMultiplos(numero, quantidade = 10) {
+      // [] cria array vazio
+      const multiplos = [];
+      for (let i = 1; i <= quantidade; i++) {
+        // adiciona numero limitado quantidade
+        multiplos.push(numero * i);
+      }
+      return multiplos;
+    }
+
+    // para encontra divisores
+    function encontrarDivisores(numero) {
+      if (numero === 0) return [];
+
+      const divisores = [];
+      // valor absoluto
+      const absNum = Math.abs(numero);
+
+      for (let i = 1; i <= absNum; i++) {
+        if (absNum % i === 0) {
+          divisores.push(i);
+          if (i !== absNum / i) {
+            divisores.push(absNum / i);
+          }
+        }
+      }
+
+      // ordenar e remover duplicatas
+      // " ...new Set() " combina operador de spread (...) com new Set()
+      // Set() - estrutura de dados que filtra para valores unicos
+      // ... - expande o array (spread Operator)
+      const divisorUnicos = [...new Set(divisores).sort((a, b) => a - b)];
+
+      if (numero < 0) {
+        const divisoresNegativos = divisorUnicos.map((d) => -d);
+        return [...divisorUnicos, ...divisoresNegativos].sort((a, b) => a - b);
+      }
+      return divisorUnicos;
+    }
+
+    function mostrarResultado(mensagem) {
+      alert(mensagem);
+      console.log(mensagem);
+    }
+
+    function main() {
+      console.log("--- Verificador de Múltiplos ---");
+
+      try {
+        const a = parseInt(prompt("Digite o primeiro número (a):"));
+        const b = parseInt(prompt("Digite o segundo número (b): "));
+
+        if (isNaN(a) || isNaN(b)) {
+          throw new Error("Por favor, digite apenas números válidos.");
+        }
+        const resultado = verificarMultiplos(a, b);
+        let saida = resultadoDetalhado(resultado);
+
+        saida += "--------------------------\n";
+        saida += "------- EXTRAS ----------\n";
+        saida += "------------------------\n";
+
+        const multiploA = encontraMultiplos(a, 5);
+        const multiploB = encontraMultiplos(b, 5);
+
+        saida += `-> 5 múltiplos de ${a}: ${multiploA.join(", ")}\n`;
+        saida += `-> 5 múltiplos de ${b}: ${multiploB.join(", ")}\n`;
+
+        const divisoresA = encontrarDivisores(a, 5);
+        const divisoresB = encontrarDivisores(b, 5);
+
+        saida += `divisores de ${a}: ${divisoresA.join(", ")}\n`;
+        saida += `divisores de ${b}: ${divisoresB.join(", ")}\n`;
+
+        if (Math.abs(a) === Math.abs(b)) {
+          saida += `\nObs: |${a}| = |${b}|, portanto são múltiplos um do outro\n`;
+        } else if (Math.abs(a) === 1 || Math.abs(b) === 1) {
+          saida += `\nObs: Um dos números é 1, que é divisor de qualquer número `;
+        }
+        mostrarResultado(saida);
+      } catch (e) {
+        mostrarResultado(
+          `Erro - ${e.message}\nDigite números inteiros diferentes de zero.`
+        );
+      }
+    }
+
+    function mostrarMultiplos() {
+      try {
+        const numM = parseInt(prompt("Digite um número: "));
+        const quantidadeM = parseInt(prompt("Quantos múltiplos deseja?"));
+
+        if (isNaN(num) || isNaN(num)) {
+          throw new Error("Por favor, digite números válidos.");
+        }
+        const multiplos = encontraMultiplos(numM, quantidadeM);
+        mostrarResultado(
+          `Primeiros ${quantidadeM} múltiplos de ${numM}: ${multiplos.join(
+            ", "
+          )}`
+        );
+      } catch (e) {
+        mostrarResultado(`Erro: ${e.message}`);
+      }
+    }
+
+    function mostrarDivisores() {
+      try {
+        const numD = parseInt(prompt("Digite um número:"));
+
+        if (isNaN(numD)) {
+          throw new Error("Por favor, digite um número válido!");
+        }
+
+        if (numD === 0) {
+          mostrarResultado("Zero não tem divisores definidos.");
+          return;
+        }
+
+        const divisores = encontrarDivisores(numD);
+        mostrarResultado(`Divisores de ${numD}: ${divisores.join(", ")}`);
+      } catch (e) {
+        mostrarResultado(`Erro: ${e.message}`);
+      }
+    }
+
+    function testes() {
+      const casoTeste = [
+        [6, 3],
+        [17, 5],
+        [15, 25],
+        [8, 8],
+        [-12, 3],
+        [100, 10],
+      ];
+
+      let saida = "--------------------------\n";
+      saida += "------- TESTES ----------\n";
+      saida += "------------------------\n";
+
+      casoTeste.forEach(([a, b], i) => {
+        saida += `\nTeste ${i + 1}: a ${a}, b = ${b}\n`;
+        saida += `----------------------------------\n`;
+
+        try {
+          const resultado = verificarMultiplos(a, b);
+          saida += `Resultado: ${resultado.mensagem}\n`;
+
+          if (resultado.AmultiploB) {
+            saida += `${a} é múltiplo de ${b}\n`;
+          } else {
+            saida += `${a} não é múltiplo de ${b}\n`;
+          }
+
+          if (resultado.BmultiploA) {
+            saida += `${b} é múltiplo de ${a}\n`;
+          } else {
+            saida += `${b} não é múltiplo de ${a}\n`;
+          }
+        } catch (e) {
+          saida += `Erro ${e.message}`;
+        }
+      });
+
+      mostrarResultado(saida);
+    }
+
+    function menu() {
+      while (true) {
+        const opcao = prompt(
+          "VERIFICADOR DE MÚLTIPLOS\n\n" +
+            "1. Verificar se dois números múltiplos\n" +
+            "2. Encontrar múltiplos de um número\n" +
+            "3. Encontrar divisores de um número\n" +
+            "4. Executar testes automáticos\n" +
+            "5. Sair\n" +
+            "Escolha um opção (1 - 5)"
+        );
+
+        if (opcao === null || opcao === "5") {
+          alert("Obrigado por usar o verificador!");
+          return;
+        }
+        switch (opcao) {
+          case "1":
+            main();
+            break;
+          case "2":
+            mostrarMultiplos();
+            break;
+          case "3":
+            mostrarDivisores();
+            break;
+          case "4":
+            testes();
+            break;
+          default:
+            alert("Opção inválida! Escolha entre 1 e 5.");
+        }
+      }
+    }
+    menu();
+  </script>
+</html>

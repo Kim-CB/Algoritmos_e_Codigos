@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Contagem de Votos</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+      }
+      .instrucoes {
+        background-color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+      }
+      .resultado {
+        background-color: #e8f8f5;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #27ae60;
+        margin: 20px 0;
+        white-space: pre-line;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Sistema de Contagem de Votos</h1>
+      <div class="instrucoes">
+        <h3>Instruções:</h3>
+        <p><strong>Como usar:</strong></p>
+        <ul>
+          <li>Digite um número para votar em um candidato</li>
+          <li>Digite <strong>0</strong> para voto em branco</li>
+          <li>Digite <strong>-1</strong> para voto nulo</li>
+          <li>Digite <strong>999</strong> para finalizar a contagem</li>
+        </ul>
+        <p>
+          <em
+            >Abra o console do navegador (F12) para ver detalhes adicionais</em
+          >
+        </p>
+      </div>
+      <div id="resultado" class="resultado" style="display: none"></div>
+    </div>
+  </body>
+  <script>
+    let totalEleitores = 0;
+    let valorTotais = 0;
+    let branco = 0;
+    let nulo = 0;
+    let validos = 0;
+    let candidatos = [];
+
+    function iniVotacao() {
+      valorTotais = 0;
+      branco = 0;
+      nulo = 0;
+      validos = 0;
+      candidatos = [];
+    }
+
+    function numtotalEleitores() {
+      while (true) {
+        const input = prompt(
+          "Digite o número total de eleitores cadastrados no município: "
+        );
+
+        if (input == null) {
+          return null;
+        }
+
+        const total = parseInt(input);
+        if (isNaN(total)) {
+          alert("Por favor, digite um número válido!");
+          continue;
+        }
+        if (total <= 0) {
+          alert("O número de eleitores deve ser maior que zero!");
+          continue;
+        }
+      }
+    }
+
+    function adcCandidato(numCadidato) {
+      for (let i = 0; i < candidatos.length; i++) {
+        if (candidatos[i].numero === numCadidato) {
+          candidatos[i].votos++;
+          return;
+        }
+      }
+      // Se não existe, cria novo candidato
+      candidatos.push({
+        numero: numCadidato,
+        votos: 1,
+      });
+    }
+
+    function processarVoto(voto) {
+      const votoStr = voto.toString().trim();
+
+      if (votoStr === "999") {
+        return "finalizar";
+      } else if (votoStr === "0") {
+        branco++;
+        valorTotais++;
+        console.log("✅Voto em branco registrado");
+        return "branco";
+      } else if (votoStr === "-1") {
+        nulo++;
+        valorTotais++;
+        console.log("✅Voto nulo registrado");
+        return "nulo";
+      } else {
+        const numCadidato = parseInt(votoStr);
+
+        if (isNaN(numCadidato) || numCadidato <= 0) {
+          return "invalido";
+        }
+
+        adcCandidato(numCadidato);
+        validos++;
+        valorTotais++;
+        console.log(`✅Voto no candidato ${numCadidato} registrado`);
+        return "cadidato";
+      }
+    }
+
+    function calcularPercentuias() {
+      const percBranco = (branco / numtotalEleitores) * 100;
+      const percNulo = (nulo / numtotalEleitores) * 100;
+      const percValido = (validos / numtotalEleitores) * 100;
+      const percAbstencao =
+        ((numtotalEleitores - valorTotais) / numtotalEleitores) * 100;
+      const percComparecimentos = (valorTotais / numtotalEleitores) * 100;
+
+      return {
+        percBranco,
+        percNulo,
+        percValido,
+        percAbstencao,
+        percComparecimentos,
+      };
+    }
+
+    function ordenarCandidatos() {
+      candidatos.sort((a, b) => b.votos - a.votos);
+    }
+
+    function gerarRelatorio() {
+      const percentuais = calcularPercentuias();
+      ordenarCandidatos();
+
+      let relatorio = `📊 RELATÓRIO FINAL DA ELEIÇÃO \n`;
+      relatorio += `-------------------------------------------`;
+
+      relatorio += `📈 RESUMO GERAL: \n`;
+      relatorio += `- Total de eleitores: ${totalEleitores.toLocaleString()}\n`;
+      relatorio += `- Votos registrados: ${valorTotais.toLocaleString()}\n`;
+      relatorio += `- Abstenções? ${
+        totalEleitores - valorTotais.toLocaleString()
+      }\n`;
+      relatorio += `- Comparecimento: ${percentuais.percComparecimentos.toFixed(
+        2
+      )}\n\n`;
+
+      relatorio += `🗳️ DISTRIBUIÇÃO DOS VOTOS:\n`;
+      relatorio += `- Votos válidos: ${validos.toLocaleString()} (${percentuias.percValido.toFixed(
+        2
+      )})\n`;
+      relatorio += `- Votos em branco: ${branco.toLocaleString()} (${percentuias.percBranco.toFixed(
+        2
+      )})\n`;
+      relatorio += `- Votos nulos: ${nulo.toLocaleString()} (${percentuias.percNulo.toFixed(
+        2
+      )})\n`;
+      relatorio += `- Abstenções: ${(
+        totalEleitores - valorTotais
+      ).toLocaleString()} (${percentuias.percAbstencao.toFixed(2)})\n`;
+
+      if (candidatos.length > 0) {
+        relatorio += `🏆 RESULTADO POR CANDIDATO:\n`;
+        candidatos.forEach((candidato, index) => {
+          const percCandidato = (candidato.votos / totalEleitores) * 100;
+          const percValidosCandidato =
+            validos > 0 ? (candidato.voto / validos) * 100 : 0;
+
+          relatorio += `${index + 1}º - Candidato ${candidato.numero}: `;
+          relatorio += `${candidato.votos.toLocaleString()} votos`;
+          relatorio += `(${percCandidato.toFixed(2)}% dos eleitores, `;
+          relatorio += `${percValidosCandidato.toFixed(2)}% dos válidos)\n`;
+        });
+      }
+      relatorio += `\n✅ VERIFICAÇÃO:\n`;
+      const totalVerificacao = validos + branco + nulo;
+      if (totalVerificacao === valorTotais) {
+        relatorio == `✓ Contagem conferida - todos os votos contabilizados \n`;
+      } else {
+        relatorio += `Total: ${totalVerificacao} = ${validos} + ${branco} + ${nulo}`;
+      }
+      relatorio += `Total: ${totalVerificacao} = ${validos} + ${branco} + ${nulo}`;
+
+      return relatorio;
+    }
+
+    function mostrarResultado(relatorio) {
+      alert(relatorio);
+
+      const divResultado = document.getElementById("resultado");
+      divResultado.textContent = relatorio;
+      divResultado.style.display = "block";
+
+      // mais detalhes console
+      console.log("\n" + relatorio);
+      console.table(candidatos);
+    }
+
+    function coletarVotos() {
+      console.log("🗳️ Iniciando coleta de votos...");
+
+      while (true) {
+        const voto = prompt(
+          ` SISTEMA DE VOTAÇÃO \n\n` +
+            `Votos registrados até agora: ${valorTotais}\n` +
+            `- Válidos: ${validos} | Brancos: ${branco} | Nulos: ${nulo}\n\n` +
+            `Digite seu voto:\n` +
+            `- Número do candidato (ex: 13, 22, 45)\n` +
+            `- 0 = Branco | -1 = Nulo | 999 = Finalizar \n`
+        );
+
+        if (voto === null) {
+          const confirmar = confirm(
+            "Deseja realmente sair sem finalizar a contagem?"
+          );
+          if (confirmar) {
+            return false;
+          }
+          continue;
+        }
+
+        const resultado = processarVoto(voto);
+
+        if (resultado === "finalizar") {
+          break;
+        } else if (resultado === "invalido") {
+          alert(
+            "❌ Voto inválido! Use apenas números positivos para candidatos."
+          );
+        }
+      }
+      return true;
+    }
+
+    function main() {
+      console.log(" Iniciando Sistema de Contagem de Votos");
+
+      try {
+        iniVotacao();
+
+        totalEleitores = numtotalEleitores();
+
+        if (totalEleitores === null) {
+          alert("Operação cancelada pelo usuário.");
+          return;
+        }
+
+        console.log(
+          `📋 Total de eleitores cadastrados: ${totalEleitores.toLocaleString()}`
+        );
+
+        const votacaoConcluida = coletarVotos();
+
+        if (!votaçãoConcluida) {
+          alert("Votação cancelada!");
+          return;
+        }
+
+        if (valorTotais === 0) {
+          alert(" Nenhum voto foi registrado! ");
+          return;
+        }
+
+        const relatorio = gerarRelatorio();
+        mostrarResultado(relatorio);
+      } catch (error) {
+        alert(` Erro no sistema: ${error.message}`);
+        console.error("Erro:", error);
+      }
+    }
+
+    function menu() {
+      while (true) {
+        const opcao = prompt(
+          "🗳️ SISTEMA DE CONTAGEM DE VOTOS\n\n" +
+            "1. Iniciar nova contagem\n" +
+            "2. Ver exemplo demonstrativo\n" +
+            "3. Sair\n\n" +
+            "Escolha uma opção (1-3):"
+        );
+
+        if (opcao === null || opcao === "3") {
+          alert("👋 Obrigado por usar o sistema!");
+          return;
+        }
+
+        switch (opcao) {
+          case "1":
+            main();
+            break;
+          case "2":
+            exemplo();
+            break;
+          default:
+            alert("❌ Opção inválida! Escolha 1, 2 ou 3.");
+        }
+      }
+    }
+    window.onload = function () {
+      setTimeout(() => {
+        menu();
+      }, 500);
+    };
+  </script>
+</html>
