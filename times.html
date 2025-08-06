@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    //globais
+    let votos = 0;
+    let times = [];
+    let flamengo = 0;
+    let fluminense = 0;
+    let vasco = 0;
+    let botafogo = 0;
+
+    function initVoto() {
+      votos = 0;
+      times = [];
+      flamengo = 0;
+      fluminense = 0;
+      vasco = 0;
+      botafogo = 0;
+    }
+
+    function pushCandidato(votando) {
+      for (let i = 0; i < times.lenght; i++) {
+        if (times[i].numero === votando) {
+          times[i].votos++;
+          return;
+        }
+      }
+
+      times.push({
+        numero: votando,
+        votos: 1,
+      });
+    }
+
+    function processarVotos(voto) {
+      const votando = parseInt(voto);
+      pushCandidato(votando);
+      if (voto === "1") {
+        flamengo++;
+        votos++;
+        console.log("Voto para Flamengo registrado");
+      } else if (voto === "2") {
+        fluminense++;
+        votos++;
+        console.log("Voto para Fluminense registrado");
+      } else if (voto === "3") {
+        vasco++;
+        votos++;
+        console.log("Voto para Vasco registrado");
+      } else if (voto === "4") {
+        botafogo++;
+        votos++;
+        console.log("Voto para Botafogo registrado");
+      } else {
+        if (isNaN(votando) || votando <= 0) {
+          alert("Valor inválido. Digite apenas números de 1 a 4.");
+        }
+      }
+      return true;
+    }
+
+    function mostrarResultados() {
+      if (votos === 0) {
+        alert("Nenhum voto foi registrado!");
+        return;
+      }
+
+      const percFlamengo = ((flamengo / votos) * 100).toFixed(2);
+      const percFluminense = ((fluminense / votos) * 100).toFixed(2);
+      const percVasco = ((vasco / votos) * 100).toFixed(2);
+      const percBotafogo = ((botafogo / votos) * 100).toFixed(2);
+
+      let resultados = `RESULTADO DA VOTAÇÃO:\n\n`;
+      resultados += `Total de votos: ${votos}\n\n`;
+      resultados += `Flamengo : ${flamengo} votos (${percFlamengo}%)\n`;
+      resultados += `Fluminense : ${fluminense} votos (${percFluminense}%)\n`;
+      resultados += `Vasco : ${vasco} votos (${percVasco}%)\n`;
+      resultados += `Botafogo : ${botafogo} votos (${percBotafogo}%)\n`;
+
+      // Vencedor
+      const timesArray = [
+        { nome: "Flamengo", votos: flamengo },
+        { nome: "Fluminense", votos: fluminense },
+        { nome: "Vasco", votos: vasco },
+        { nome: "Botafogo", votos: botafogo },
+      ];
+
+      timesArray.sort((a, b) => b.votos - a.votos);
+
+      if (timesArray[0].votos > 0) {
+        resultados += `Vencedor: ${timesArray[0].nome} com ${
+          timesArray[0].votos
+        } votos (${((timesArray[0].votos / votos) * 100).toFixed(2)}%)`;
+      }
+
+      alert(resultados);
+    }
+
+    function coletarVotos() {
+      console.log("Iniciando coleta de votos...");
+
+      do {
+        const voto = prompt(
+          `SISTEMA DE VOTAÇÃO:  \n\n` +
+            `Votos registrados até agora: ${votos} \n` +
+            `- Flamengo: ${flamengo} | Fluminense: ${fluminense} | Vasco: ${vasco} | Botafogo: ${botafogo} | \n` +
+            `1. Flamengo \n` +
+            `2. Fluminense \n` +
+            `3. Vasco \n` +
+            `4. Botafogo \n` +
+            `Para encerrar só apertar o botão Cancelar. \n`
+        );
+
+        if (voto === null) break;
+
+        const resultado = processarVotos(voto);
+      } while (true);
+
+      mostrarResultados();
+      return true;
+    }
+
+    function main() {
+      console.log(" Inicio de Votação....");
+
+      try {
+        initVoto();
+
+        const votacaoConcluida = coletarVotos();
+
+        if (!votacaoConcluida) {
+          alert("Votação cancelada");
+          return;
+        }
+
+        if (votos === 0) {
+          alert(" Nenhum voto foi registrado! ");
+          return;
+        }
+      } catch (error) {
+        alert(`Erro no sistema: ${error.message}`);
+        console.error("Erro: ", error);
+      }
+    }
+
+    function menu() {
+      while (true) {
+        const opcao = prompt(
+          "VOTAÇÃO - MELHOR DO RIO\n\n" +
+            "1. Iniciar votação.\n" +
+            "2. Exemplo de votação.\n" +
+            "3. Sair\n\n" +
+            "Escoolha uma opção(1-3):"
+        );
+
+        if (opcao === null || opcao === "3") {
+          alert("Obrigado por votar.");
+          return;
+        }
+
+        switch (opcao) {
+          case "1":
+            main();
+            break;
+          case "2":
+            exemplo();
+            break;
+          default:
+            alert("Opção inválida! Escolha 1, 2 ou 3.");
+        }
+      }
+    }
+    menu();
+  </script>
+</html>
