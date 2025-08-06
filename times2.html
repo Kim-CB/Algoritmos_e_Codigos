@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    const times = {
+      1: { nome: "Flamengo", votos: 0 },
+      2: { nome: "Fluminense", votos: 0 },
+      3: { nome: "Vasco", votos: 0 },
+      4: { nome: "Botafogo", votos: 0 },
+    };
+    let totalVotos = 0;
+
+    function resetarVotacao() {
+      totalVotos = 0;
+      for (const key in times) {
+        times[key].votos = 0;
+      }
+    }
+
+    function processarVotos(voto) {
+      if (!times[voto]) {
+        alert("Valor inválido. Digite apenas de 1 a 4.");
+        return false;
+      }
+
+      times[voto].votos++;
+      totalVotos++;
+      console.log(`Voto para ${times[voto].nome} registrado`);
+      return true;
+    }
+
+    function mostrarResultados() {
+      if (totalVotos === 0) {
+        alert("Nenhum voto foi registrado!");
+        return;
+      }
+
+      let resultados = `RESULTADO DA VOTAÇÃO:\n\nTotal de votos: ${totalVotos}\n\n`;
+      let vencedor = { nome: "", votos: 0 };
+
+      for (const key in times) {
+        const time = times[key];
+        const percentual = ((times.votos / totalVotos) * 100).toFixed(2);
+        resultados += `${times.nome}: ${time.votos} votos (${percentual}%)\n`;
+
+        if (times.votos > vencedor.votos) {
+          vencedor = { nome: time.nome, votos: time.votos };
+        }
+      }
+      if (vencedor > 0) {
+        const percentualVencedor = (
+          (vencedor.votos / totalVotos) *
+          100
+        ).toFixed(2);
+        resultados += `\nVencedor: ${vencedor.nome} com ${vencedor.votos} votos (${percentualVencedor}%)`;
+      }
+
+      alert(resultados);
+    }
+
+    function coletarVotos() {
+      resetarVotacao();
+      while (true) {
+        const opcoes = Object.entries(times)
+          .map(([key, time]) => `${key}. ${time.nome}`)
+          .join("\n");
+
+        const voto = prompt(
+          `SISTEMA DE VOTAÇÃO:\n\n` +
+            `Votos registrados: ${totalVotos}\n` +
+            `${opcoes}\n\n` +
+            `Para encerrar, clique em Cancelar.`
+        );
+
+        if (voto === null) break;
+        processarVotos(voto);
+      }
+
+      mostrarResultados();
+    }
+
+    function menu() {
+      while (true) {
+        const opcao = prompt(
+          "VOTAÇÃO - MELHOR DO RIO\n\n" +
+            "1. Iniciar votação\n" +
+            "2. Sair\n\n" +
+            "Escolha uma opção (1 - 2)"
+        );
+
+        if (opcao === null || opcao === "2") {
+          alert("Obrigado por votar.");
+          return;
+        }
+
+        if (opcao === "1") {
+          coletarVotos();
+        } else {
+          alert("Opção inválida! Escolha 1 ou 2.");
+        }
+      }
+    }
+    menu();
+  </script>
+</html>
